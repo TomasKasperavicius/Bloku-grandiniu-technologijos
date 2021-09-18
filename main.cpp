@@ -275,7 +275,7 @@ int main(int argc, char const *argv[])
                 }
             }
             cout << "Iš viso sutapo: " << matched << endl;
-            cout << "Sutapimo procentas: " << matched / 100000.0 * 100 << endl;
+            cout << "Sutapimo procentas: " << matched / 50000.0 * 100 << endl;
         }
         if (strcmp(argv[1], "-pairsDiff") == 0)
         {
@@ -419,7 +419,6 @@ int main(int argc, char const *argv[])
                 }
                 matched_binary+=CompareStrings(hash1Inbits,hash2Inbits);
             }
-            std::ofstream rz ("test.txt");
             for (int i = 0; i < 25000; i += 2)
             {
                 string hash1 = hashFunction(pairs_1000[i]);
@@ -427,8 +426,6 @@ int main(int argc, char const *argv[])
                 matched_hex+=CompareStrings(hash1, hash2);
                 string hash1Inbits="";
                 string hash2Inbits="";
-                rz << hash1 <<endl;
-                rz << hash2 <<endl;
                 for (int i = 0; i < 64; i++)
                 {
                     hash1Inbits+=bitset<4>(hash1[i]).to_string();
@@ -439,7 +436,6 @@ int main(int argc, char const *argv[])
                 }
                 matched_binary+=CompareStrings(hash1Inbits,hash2Inbits);
             }
-            rz.close();
             cout << "Skirtingumas bitų lymenyje: " << 100-((matched_binary/(50000*256.0))*100) << endl;
             cout << "Skirtingumas hex'ų lymenyje: " << 100-((matched_hex/(50000*64.0))*100) << endl;
         }
