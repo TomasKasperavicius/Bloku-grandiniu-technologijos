@@ -7,6 +7,11 @@
 #include <chrono>
 #include <cstring>
 #include <bitset>
+#include "cryptoLib/hex.h"
+#include "cryptoLib/files.h"
+#define CRYPTOPP_ENABLE_NAMESPACE_WEAK 1
+#include "cryptoLib/md5.h"
+#include "cryptoLib/sha.h"
 
 using std::cin;
 using std::cout;
@@ -14,6 +19,8 @@ using std::endl;
 using std::string;
 using std::vector;
 using std::bitset;
+using namespace CryptoPP;
+
 
 #define A 5870873747 //pirminiai skaiciai
 #define B 6863349307
@@ -143,13 +150,13 @@ int main(int argc, char const *argv[])
     if (argc != 1)
     {
     
-        if (strcmp(argv[1], "-k") != 0 && strcmp(argv[1], "-pairs") != 0 && strcmp(argv[1], "-pairsDiff") != 0)
+        if (strcmp(argv[1], "-k") != 0 && strcmp(argv[1], "-pairs") != 0 && strcmp(argv[1], "-pairsDiff") != 0&&strcmp(argv[1], "-md5") != 0&&strcmp(argv[1], "-sha256") != 0)
         {
             cout << "Invalid command!"<<endl;
             exit(1);
         }
         
-        if (strcmp(argv[1], "-k") != 0 && strcmp(argv[1], "-pairs") != 0 && strcmp(argv[1], "-pairsDiff") != 0)
+        if (strcmp(argv[1], "-k") != 0 && strcmp(argv[1], "-pairs") != 0 && strcmp(argv[1], "-pairsDiff") != 0&&strcmp(argv[1], "-md5") != 0&&strcmp(argv[1], "-sha256") != 0)
         {
             for (int i = 1; i < argc; i++)
             {
@@ -174,7 +181,6 @@ int main(int argc, char const *argv[])
         }
         if (strcmp(argv[1], "-k") == 0)
         {
-
             std::fstream f(argv[2], std::ios::in);
             try
             {
@@ -438,6 +444,64 @@ int main(int argc, char const *argv[])
             }
             cout << "Skirtingumas bitų lymenyje: " << 100-((matched_binary/(50000*256.0))*100) << endl;
             cout << "Skirtingumas hex'ų lymenyje: " << 100-((matched_hex/(50000*64.0))*100) << endl;
+        }
+        if (strcmp(argv[1], "-sha256") == 0)
+        {
+            std::fstream f(argv[2], std::ios::in);
+            try
+            {
+                if (!f)
+                {
+                    throw "Nepavyko atidaryti failo";
+                }
+            }
+            catch (const char *zinute)
+            {
+                std::cerr << zinute << '\n';
+                exit(1);
+            }
+            std::stringstream ss;
+            ss << f.rdbuf();
+            string line;
+            auto start = std::chrono::high_resolution_clock::now();
+            while (getline(ss, line))
+            {
+            SHA256 hash;
+            string digest;
+            StringSource s(line, true, new HashFilter(hash, new HexEncoder(new StringSink(digest))));
+            }
+            auto end = std::chrono::high_resolution_clock::now();
+            std::chrono::duration<double> diff = end - start;
+            cout << "Konstitucijos hash'avimas po eilutę su sha256 užtruko: " << diff.count()<< endl;
+        }
+        if (strcmp(argv[1], "-md5") == 0)
+        {
+            std::fstream f(argv[2], std::ios::in);
+            try
+            {
+                if (!f)
+                {
+                    throw "Nepavyko atidaryti failo";
+                }
+            }
+            catch (const char *zinute)
+            {
+                std::cerr << zinute << '\n';
+                exit(1);
+            }
+            std::stringstream ss;
+            ss << f.rdbuf();
+            string line;
+            auto start = std::chrono::high_resolution_clock::now();
+            while (getline(ss, line))
+            {
+            string digest;
+            Weak::MD5 hash;
+            StringSource s(line, true, new HashFilter(hash, new HexEncoder(new StringSink(digest))));
+            }
+            auto end = std::chrono::high_resolution_clock::now();
+            std::chrono::duration<double> diff = end - start;
+            cout << "Konstitucijos hash'avimas po eilutę su md5 užtruko: " << diff.count() << endl;
         }
     }
     if (argc == 1)
