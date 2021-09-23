@@ -123,7 +123,7 @@ void CreateTestFiles()
     f.close();
     for (int i = 0; i < diffN; i++)
     {
-        FileName[14] = char(nr++) + '0';
+        FileName[14] = char(nr) + '0';
         f.open(FileName, std::ios::out);
         if (i != 2)
         {
