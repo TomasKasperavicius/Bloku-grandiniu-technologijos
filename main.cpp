@@ -31,6 +31,19 @@ const int diffN = 2;
 const int randomN = 2;
 const int SymbolsN = 1000;
 
+int CompareStrings(const string& a, const string& b)
+{
+    int matched=0;
+    for (int i = 0; i < a.length(); i++)
+    {
+        if (a[i]==b[i])
+        {
+            matched++;
+        }
+    }
+    return matched;
+}
+
 string hashFunction(string text)
 {
     unsigned long long h = seed;
@@ -38,18 +51,17 @@ string hashFunction(string text)
     {
         return "ac5171ee1fcf8ad4a986e4d6ab3c0e3c2eb38b79fb557376ea497bee17f8dd7e"; //random hashas
     }
-
     if (text.length() < 32)
     {
-        unsigned int sum = 0;
+        unsigned long long num = 263239;
         for (int i = 0; i < text.length(); i++)
         {
-            sum += text[i];
-        }
-        srand(text.length() + sum);
+            num = (num * 5)^(text[i]);
+        }  
+        srand(num); 
         for (int i = text.length() - 1; i < 32; i++)
         {
-            text += std::to_string(256 + rand() % C);
+            text += std::to_string(rand()%num);
         }
     }
     std::stringstream ss;
@@ -125,18 +137,7 @@ void CreateTestFiles()
     f.open("empty.txt", std::ios::out);
     f.close();
 }
-int CompareStrings(const string& a, const string& b)
-{
-    int matched=0;
-    for (int i = 0; i < a.length(); i++)
-    {
-        if (a[i]==b[i])
-        {
-            matched++;
-        }
-    }
-    return matched;
-}
+
 int main(int argc, char const *argv[])
 {
     std::ifstream f;
@@ -150,15 +151,15 @@ int main(int argc, char const *argv[])
     if (argc != 1)
     {
     
-        if (strcmp(argv[1], "-k") != 0 && strcmp(argv[1], "-pairs") != 0 && strcmp(argv[1], "-pairsDiff") != 0&&strcmp(argv[1], "-md5") != 0&&strcmp(argv[1], "-sha256") != 0)
+        if (strcmp(argv[1], "-k") != 0 && strcmp(argv[1], "-pairs") != 0 && strcmp(argv[1], "-pairsDiff") != 0&&strcmp(argv[1], "-md5") != 0&&strcmp(argv[1], "-sha256") != 0&&strcmp(argv[1], "-f") != 0)
         {
             cout << "Invalid command!"<<endl;
             exit(1);
         }
         
-        if (strcmp(argv[1], "-k") != 0 && strcmp(argv[1], "-pairs") != 0 && strcmp(argv[1], "-pairsDiff") != 0&&strcmp(argv[1], "-md5") != 0&&strcmp(argv[1], "-sha256") != 0)
+        if (strcmp(argv[1], "-f") == 0)
         {
-            for (int i = 1; i < argc; i++)
+            for (int i = 2; i < argc; i++)
             {
                 std::fstream f(argv[i], std::ios::in);
                 try
@@ -181,7 +182,7 @@ int main(int argc, char const *argv[])
         }
         if (strcmp(argv[1], "-k") == 0)
         {
-            std::fstream f(argv[2], std::ios::in);
+            std::fstream f("konstitucija.txt", std::ios::in);
             try
             {
                 if (!f)
