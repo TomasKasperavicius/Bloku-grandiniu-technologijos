@@ -7,20 +7,20 @@
 #include <chrono>
 #include <cstring>
 #include <bitset>
+#include <iomanip>
 #include "cryptoLib/hex.h"
 #include "cryptoLib/files.h"
 #define CRYPTOPP_ENABLE_NAMESPACE_WEAK 1
 #include "cryptoLib/md5.h"
 #include "cryptoLib/sha.h"
 
+using std::bitset;
 using std::cin;
 using std::cout;
 using std::endl;
 using std::string;
 using std::vector;
-using std::bitset;
 using namespace CryptoPP;
-
 
 #define A 5870873747 //pirminiai skaiciai
 #define B 6863349307
@@ -29,14 +29,14 @@ using namespace CryptoPP;
 
 const int diffN = 2;
 const int randomN = 2;
-const int SymbolsN = 1000;
+const int SymbolsN = 10000;
 
-int CompareStrings(const string& a, const string& b)
+int CompareStrings(const string &a, const string &b)
 {
-    int matched=0;
+    int matched = 0;
     for (int i = 0; i < a.length(); i++)
     {
-        if (a[i]==b[i])
+        if (a[i] == b[i])
         {
             matched++;
         }
@@ -56,12 +56,12 @@ string hashFunction(string text)
         unsigned long long num = 263239;
         for (int i = 0; i < text.length(); i++)
         {
-            num = (num * 5)^(text[i]);
-        }  
-        srand(num); 
+            num = (num * 5) ^ (text[i]);
+        }
+        srand(num);
         for (int i = text.length() - 1; i < 32; i++)
         {
-            text += std::to_string(rand()%num);
+            text += std::to_string(rand() % num);
         }
     }
     std::stringstream ss;
@@ -150,13 +150,13 @@ int main(int argc, char const *argv[])
     string text = "";
     if (argc != 1)
     {
-    
-        if (strcmp(argv[1], "-k") != 0 && strcmp(argv[1], "-pairs") != 0 && strcmp(argv[1], "-pairsDiff") != 0&&strcmp(argv[1], "-md5") != 0&&strcmp(argv[1], "-sha256") != 0&&strcmp(argv[1], "-f") != 0)
+
+        if (strcmp(argv[1], "-k") != 0 && strcmp(argv[1], "-pairs") != 0 && strcmp(argv[1], "-pairsDiff") != 0 && strcmp(argv[1], "-md5") != 0 && strcmp(argv[1], "-sha256") != 0 && strcmp(argv[1], "-f") != 0)
         {
-            cout << "Invalid command!"<<endl;
+            cout << "Invalid command!" << endl;
             exit(1);
         }
-        
+
         if (strcmp(argv[1], "-f") == 0)
         {
             for (int i = 2; i < argc; i++)
@@ -205,7 +205,7 @@ int main(int argc, char const *argv[])
             }
             auto end = std::chrono::high_resolution_clock::now();
             std::chrono::duration<double> diff = end - start;
-            cout << "Konstitucijos hash'avimas po eilutę užtruko: " << diff.count() << endl;
+            cout << "Konstitucijos hash'avimas po eilutę užtruko: " << diff.count() << " s" << endl;
         }
         if (strcmp(argv[1], "-pairs") == 0)
         {
@@ -216,7 +216,7 @@ int main(int argc, char const *argv[])
             vector<string> pairs_100;
             vector<string> pairs_500;
             vector<string> pairs_1000;
-            for (int i = 0; i < 25000; i++)
+            for (int i = 0; i < 50000; i++)
             {
                 string temp;
                 for (int j = 0; j < 10; j++)
@@ -225,7 +225,7 @@ int main(int argc, char const *argv[])
                 }
                 pairs_10.push_back(temp);
             }
-            for (int i = 0; i < 25000; i++)
+            for (int i = 0; i < 50000; i++)
             {
                 string temp;
                 for (int j = 0; j < 100; j++)
@@ -234,7 +234,7 @@ int main(int argc, char const *argv[])
                 }
                 pairs_100.push_back(temp);
             }
-            for (int i = 0; i < 25000; i++)
+            for (int i = 0; i < 50000; i++)
             {
                 string temp;
                 for (int j = 0; j < 500; j++)
@@ -243,7 +243,7 @@ int main(int argc, char const *argv[])
                 }
                 pairs_500.push_back(temp);
             }
-            for (int i = 0; i < 25000; i++)
+            for (int i = 0; i < 50000; i++)
             {
                 string temp;
                 for (int j = 0; j < 1000; j++)
@@ -253,28 +253,28 @@ int main(int argc, char const *argv[])
                 pairs_1000.push_back(temp);
             }
             int matched = 0;
-            for (int i = 0; i < 25000; i += 2)
+            for (int i = 0; i < 50000; i += 2)
             {
                 if (hashFunction(pairs_10[i]) == hashFunction(pairs_10[i + 1]))
                 {
                     matched++;
                 }
             }
-            for (int i = 0; i < 25000; i += 2)
+            for (int i = 0; i < 50000; i += 2)
             {
                 if (hashFunction(pairs_100[i]) == hashFunction(pairs_100[i + 1]))
                 {
                     matched++;
                 }
             }
-            for (int i = 0; i < 25000; i += 2)
+            for (int i = 0; i < 50000; i += 2)
             {
                 if (hashFunction(pairs_500[i]) == hashFunction(pairs_500[i + 1]))
                 {
                     matched++;
                 }
             }
-            for (int i = 0; i < 25000; i += 2)
+            for (int i = 0; i < 50000; i += 2)
             {
                 if (hashFunction(pairs_1000[i]) == hashFunction(pairs_1000[i + 1]))
                 {
@@ -282,7 +282,7 @@ int main(int argc, char const *argv[])
                 }
             }
             cout << "Iš viso sutapo: " << matched << endl;
-            cout << "Sutapimo procentas: " << matched / 50000.0 * 100 << endl;
+            cout << "Sutapimo procentas: " << matched / 100000.0 * 100 << endl;
         }
         if (strcmp(argv[1], "-pairsDiff") == 0)
         {
@@ -295,7 +295,7 @@ int main(int argc, char const *argv[])
             vector<string> pairs_1000;
             string temp;
             char previous;
-            for (int i = 1; i <= 25000; i++)
+            for (int i = 1; i <= 50000; i++)
             {
 
                 if (i % 2 == 0)
@@ -312,9 +312,9 @@ int main(int argc, char const *argv[])
                     temp += char(dist(mt));
                 }
                 previous = temp[0];
-               pairs_10.push_back(temp);
+                pairs_10.push_back(temp);
             }
-            for (int i = 1; i <= 25000; i++)
+            for (int i = 1; i <= 50000; i++)
             {
 
                 if (i % 2 == 0)
@@ -333,7 +333,7 @@ int main(int argc, char const *argv[])
                 previous = temp[0];
                 pairs_100.push_back(temp);
             }
-            for (int i = 1; i <= 25000; i++)
+            for (int i = 1; i <= 50000; i++)
             {
 
                 if (i % 2 == 0)
@@ -352,7 +352,7 @@ int main(int argc, char const *argv[])
                 previous = temp[0];
                 pairs_500.push_back(temp);
             }
-            for (int i = 1; i <= 25000; i++)
+            for (int i = 1; i <= 50000; i++)
             {
 
                 if (i % 2 == 0)
@@ -371,80 +371,169 @@ int main(int argc, char const *argv[])
                 previous = temp[0];
                 pairs_1000.push_back(temp);
             }
-            
-            
             int matched_hex = 0;
             int matched_binary = 0;
-            for (int i = 0; i < 25000; i += 2)
+            string h1 = hashFunction(pairs_10[0]);
+            string h2 = hashFunction(pairs_10[1]);
+            int hex_min, hex_max = CompareStrings(h1, h2);
+            matched_hex += hex_max;
+            string h1Inbits = "";
+            string h2Inbits = "";
+            for (int i = 0; i < 64; i++)
+            {
+                h1Inbits += bitset<4>(h1[i]).to_string();
+            }
+            for (int i = 0; i < 64; i++)
+            {
+                h2Inbits += bitset<4>(h2[i]).to_string();
+            }
+            int binary_min, binary_max = CompareStrings(h1Inbits, h2Inbits);
+            matched_binary += binary_max;
+            for (int i = 2; i < 50000; i += 2)
+            {
+
+                string hash1 = hashFunction(pairs_10[i]);
+                string hash2 = hashFunction(pairs_10[i + 1]);
+                int num = CompareStrings(hash1, hash2);
+                if (num > hex_max)
+                {
+                    hex_max = num;
+                }
+                if (num < hex_min)
+                {
+                    hex_min = num;
+                }
+                matched_hex += num;
+                string hash1Inbits = "";
+                string hash2Inbits = "";
+                for (int i = 0; i < 64; i++)
+                {
+                    hash1Inbits += bitset<4>(hash1[i]).to_string();
+                }
+                for (int i = 0; i < 64; i++)
+                {
+                    hash2Inbits += bitset<4>(hash2[i]).to_string();
+                }
+                int num2 = CompareStrings(hash1Inbits, hash2Inbits);;
+                if (num2 > binary_max)
+                {
+                    binary_max = num2;
+                }
+                if (num2 < binary_min)
+                {
+                    binary_min = num2;
+                }
+                matched_binary += num2;
+            }
+            for (int i = 0; i < 50000; i += 2)
             {
                 string hash1 = hashFunction(pairs_10[i]);
                 string hash2 = hashFunction(pairs_10[i + 1]);
-                matched_hex+=CompareStrings(hash1, hash2);
-                string hash1Inbits="";
-                string hash2Inbits="";
+                int num = CompareStrings(hash1, hash2);
+                if (num > hex_max)
+                {
+                    hex_max = num;
+                }
+                if (num < hex_min)
+                {
+                    hex_min = num;
+                }
+                matched_hex += num;
+                string hash1Inbits = "";
+                string hash2Inbits = "";
                 for (int i = 0; i < 64; i++)
                 {
-                    hash1Inbits+=bitset<4>(hash1[i]).to_string();
+                    hash1Inbits += bitset<4>(hash1[i]).to_string();
                 }
                 for (int i = 0; i < 64; i++)
                 {
-                    hash2Inbits+=bitset<4>(hash2[i]).to_string();
+                    hash2Inbits += bitset<4>(hash2[i]).to_string();
                 }
-                matched_binary+=CompareStrings(hash1Inbits,hash2Inbits);
+                int num2 = CompareStrings(hash1Inbits, hash2Inbits);;
+                if (num2 > binary_max)
+                {
+                    binary_max = num2;
+                }
+                if (num2 < binary_min)
+                {
+                    binary_min = num2;
+                }
+                matched_binary += num2;
             }
-            for (int i = 0; i < 25000; i += 2)
+            for (int i = 0; i < 50000; i += 2)
             {
-                string hash1 = hashFunction(pairs_100[i]);
-                string hash2 = hashFunction(pairs_100[i + 1]);
-                matched_hex+=CompareStrings(hash1, hash2);
-                string hash1Inbits="";
-                string hash2Inbits="";
+                string hash1 = hashFunction(pairs_10[i]);
+                string hash2 = hashFunction(pairs_10[i + 1]);
+                int num = CompareStrings(hash1, hash2);
+                if (num > hex_max)
+                {
+                    hex_max = num;
+                }
+                if (num < hex_min)
+                {
+                    hex_min = num;
+                }
+                matched_hex += num;
+                string hash1Inbits = "";
+                string hash2Inbits = "";
                 for (int i = 0; i < 64; i++)
                 {
-                    hash1Inbits+=bitset<4>(hash1[i]).to_string();
+                    hash1Inbits += bitset<4>(hash1[i]).to_string();
                 }
                 for (int i = 0; i < 64; i++)
                 {
-                    hash2Inbits+=bitset<4>(hash2[i]).to_string();
+                    hash2Inbits += bitset<4>(hash2[i]).to_string();
                 }
-                matched_binary+=CompareStrings(hash1Inbits,hash2Inbits);
+                int num2 = CompareStrings(hash1Inbits, hash2Inbits);;
+                if (num2 > binary_max)
+                {
+                    binary_max = num2;
+                }
+                if (num2 < binary_min)
+                {
+                    binary_min = num2;
+                }
+                matched_binary += num2;
             }
-            for (int i = 0; i < 25000; i += 2)
+            for (int i = 0; i < 50000; i += 2)
             {
-                string hash1 = hashFunction(pairs_500[i]);
-                string hash2 = hashFunction(pairs_500[i + 1]);
-                matched_hex+=CompareStrings(hash1, hash2);
-                string hash1Inbits="";
-                string hash2Inbits="";
+                string hash1 = hashFunction(pairs_10[i]);
+                string hash2 = hashFunction(pairs_10[i + 1]);
+                int num = CompareStrings(hash1, hash2);
+                if (num > hex_max)
+                {
+                    hex_max = num;
+                }
+                if (num < hex_min)
+                {
+                    hex_min = num;
+                }
+                matched_hex += num;
+                string hash1Inbits = "";
+                string hash2Inbits = "";
                 for (int i = 0; i < 64; i++)
                 {
-                    hash1Inbits+=bitset<4>(hash1[i]).to_string();
+                    hash1Inbits += bitset<4>(hash1[i]).to_string();
                 }
                 for (int i = 0; i < 64; i++)
                 {
-                    hash2Inbits+=bitset<4>(hash2[i]).to_string();
+                    hash2Inbits += bitset<4>(hash2[i]).to_string();
                 }
-                matched_binary+=CompareStrings(hash1Inbits,hash2Inbits);
+                int num2 = CompareStrings(hash1Inbits, hash2Inbits);;
+                if (num2 > binary_max)
+                {
+                    binary_max = num2;
+                }
+                if (num2 < binary_min)
+                {
+                    binary_min = num2;
+                }
+                matched_binary += num2;
             }
-            for (int i = 0; i < 25000; i += 2)
-            {
-                string hash1 = hashFunction(pairs_1000[i]);
-                string hash2 = hashFunction(pairs_1000[i + 1]);
-                matched_hex+=CompareStrings(hash1, hash2);
-                string hash1Inbits="";
-                string hash2Inbits="";
-                for (int i = 0; i < 64; i++)
-                {
-                    hash1Inbits+=bitset<4>(hash1[i]).to_string();
-                }
-                for (int i = 0; i < 64; i++)
-                {
-                    hash2Inbits+=bitset<4>(hash2[i]).to_string();
-                }
-                matched_binary+=CompareStrings(hash1Inbits,hash2Inbits);
-            }
-            cout << "Skirtingumas bitų lymenyje: " << 100-((matched_binary/(50000*256.0))*100) << endl;
-            cout << "Skirtingumas hex'ų lymenyje: " << 100-((matched_hex/(50000*64.0))*100) << endl;
+            cout << "Skirtingumas bitų lymenyje: " << 100 - ((matched_binary / (100000 * 256.0)) * 100) << endl;
+            cout << "Minimalus: " << binary_min << ", maksimalus: " << binary_max << ", vidurkinis: " << std::fixed <<std::setprecision(2) << 1 - (matched_binary / (100000 * 256.0))<< endl;
+            cout << "Skirtingumas hex'ų lymenyje: " << 100 - ((matched_hex / (100000 * 64.0)) * 100) << endl;
+            cout << "Minimalus: " << hex_min << ", maksimalus: " << hex_max << ", vidurkinis: " << std::fixed <<std::setprecision(2) << 1 - (matched_hex / (100000 * 64.0))<< endl;
         }
         if (strcmp(argv[1], "-sha256") == 0)
         {
@@ -467,13 +556,13 @@ int main(int argc, char const *argv[])
             auto start = std::chrono::high_resolution_clock::now();
             while (getline(ss, line))
             {
-            SHA256 hash;
-            string digest;
-            StringSource s(line, true, new HashFilter(hash, new HexEncoder(new StringSink(digest))));
+                SHA256 hash;
+                string digest;
+                StringSource s(line, true, new HashFilter(hash, new HexEncoder(new StringSink(digest))));
             }
             auto end = std::chrono::high_resolution_clock::now();
             std::chrono::duration<double> diff = end - start;
-            cout << "Konstitucijos hash'avimas po eilutę su sha256 užtruko: " << diff.count()<< endl;
+            cout << "Konstitucijos hash'avimas po eilutę su sha256 užtruko: " << diff.count() << " s" << endl;
         }
         if (strcmp(argv[1], "-md5") == 0)
         {
@@ -496,13 +585,13 @@ int main(int argc, char const *argv[])
             auto start = std::chrono::high_resolution_clock::now();
             while (getline(ss, line))
             {
-            string digest;
-            Weak::MD5 hash;
-            StringSource s(line, true, new HashFilter(hash, new HexEncoder(new StringSink(digest))));
+                string digest;
+                Weak::MD5 hash;
+                StringSource s(line, true, new HashFilter(hash, new HexEncoder(new StringSink(digest))));
             }
             auto end = std::chrono::high_resolution_clock::now();
             std::chrono::duration<double> diff = end - start;
-            cout << "Konstitucijos hash'avimas po eilutę su md5 užtruko: " << diff.count() << endl;
+            cout << "Konstitucijos hash'avimas po eilutę su md5 užtruko: " << diff.count() << " s" << endl;
         }
     }
     if (argc == 1)
